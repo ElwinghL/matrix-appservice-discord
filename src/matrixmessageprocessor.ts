@@ -17,6 +17,7 @@ limitations under the License.
 import { MatrixClient } from "@vector-im/matrix-bot-sdk";
 import * as Discord from "discord.js";
 import { DiscordBot } from "./bot";
+import { Log } from "./log";
 import { DiscordBridgeConfig } from "./config";
 import { IMatrixMessage } from "./matrixtypes";
 import {
@@ -27,6 +28,7 @@ import {
 import { Util } from "./util";
 
 const DEFAULT_ROOM_NOTIFY_POWER_LEVEL = 50;
+const log = new Log("DiscordMessageProcessor");
 
 export interface IMatrixMessageProcessorParams {
     displayname?: string;
@@ -129,6 +131,7 @@ export class MatrixMessageProcessor {
             },
             getRoleId: async (mxid: string) => {
                 const role = await guild.roles.fetch(mxid);
+                log.warn(`Role : ${role} Id : ${mxid}`);
                 if (!role) {
                     return null;
                 }

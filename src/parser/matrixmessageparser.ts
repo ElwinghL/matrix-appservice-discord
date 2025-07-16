@@ -30,6 +30,7 @@ const DEFAULT_ROOM_NOTIFY_POWER_LEVEL = 50;
 export interface IMatrixMessageParserCallbacks {
     canNotifyRoom: () => Promise<boolean>;
     getUserId: (mxid: string) => Promise<string | null>;
+    getRoleId:(mxid: string) => Promise<string | null>;
     getChannelId: (mxid: string) => Promise<string | null>;
     getEmoji: (mxc: string, name: string) => Promise<IDiscordEmoji | null>;
     mxcUrlToHttp: (mxc: string) => Promise<string | null>;
@@ -159,6 +160,14 @@ export class MatrixMessageParser {
         return `<@${retId}>`;
     }
 
+    private async parseRole(opts: IMatrixMessageParserOpts, id: string): Promise<string> {
+        const retId = await opts.callbacks.getRoleId(id);
+        if (!retId) {
+            return "";
+        }
+        return `<@${retId}>`;
+    }
+
     private async parseChannel(opts: IMatrixMessageParserOpts, id: string): Promise<string> {
         const retId = await opts.callbacks.getChannelId(id);
         if (!retId) {
@@ -187,6 +196,9 @@ export class MatrixMessageParser {
             case "@":
                 // user pill
                 reply = await this.parseUser(opts, id);
+                //If it's not a user it can be a role
+                if (!reply)
+                    reply = await this.parseRole(opts,id);
                 // don't fall back to parseLinkContent, we don't want matrix.to URL previews
                 // for all Matrix mentions of non-Discord users.
                 return reply || await this.walkChildNodes(opts, node);

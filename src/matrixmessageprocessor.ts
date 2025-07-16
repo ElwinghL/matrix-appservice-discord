@@ -41,6 +41,7 @@ export class MatrixMessageProcessor {
     private parser: MatrixMessageParser;
     constructor(public bot: DiscordBot, private config: DiscordBridgeConfig) {
         this.parser = new MatrixMessageParser();
+        log.error(`Mon parser est la`)
     }
 
     public async FormatMessage(

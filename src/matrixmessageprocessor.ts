@@ -124,7 +124,7 @@ export class MatrixMessageProcessor {
                 const USER_REGEX = /^@xdiscord_([0-9]+)/;
                 const match = mxid.match(USER_REGEX);
                 const member = match && await guild.members.fetch(match[1]);
-                log.warn(`Member : ${member} Id : ${mxid}`);
+                log.verbose(`getUserId : Member : ${member} Id : ${mxid}`);
                 if (!match || !member) {
                     return null;
                 }
@@ -132,7 +132,7 @@ export class MatrixMessageProcessor {
             },
             getRoleId: async (mxid: string) => {
                 const role = await guild.roles.fetch(mxid);
-                log.warn(`Role : ${JSON.stringify(role)} Id : ${mxid}`);
+                log.warn(`getRoleId : Role : ${JSON.stringify(role)} Id : ${mxid}`);
                 if (!role) {
                     return null;
                 }

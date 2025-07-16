@@ -20,12 +20,13 @@ import * as Parser from "node-html-parser";
 import { Util } from "./util";
 import * as highlightjs from "highlight.js";
 import * as unescapeHtml from "unescape-html";
-import got from "got";
+import { Log } from "../log";
 
 const MIN_NAME_LENGTH = 2;
 const MAX_NAME_LENGTH = 32;
 const MATRIX_TO_LINK = "https://matrix.to/#/";
 const DEFAULT_ROOM_NOTIFY_POWER_LEVEL = 50;
+const log = new Log("DiscordMatrixParser");
 
 export interface IMatrixMessageParserCallbacks {
     canNotifyRoom: () => Promise<boolean>;
@@ -196,9 +197,6 @@ export class MatrixMessageParser {
             case "@":
                 // user pill
                 reply = await this.parseUser(opts, id);
-                //If it's not a user it can be a role
-                if (!reply)
-                    reply = await this.parseRole(opts,id);
                 // don't fall back to parseLinkContent, we don't want matrix.to URL previews
                 // for all Matrix mentions of non-Discord users.
                 return reply || await this.walkChildNodes(opts, node);
@@ -358,6 +356,13 @@ export class MatrixMessageParser {
             if ((node as Parser.TextNode).text === "\n") {
                 return "";
             }
+
+            log.warn(`walkNode : Text : ${(node as Parser.TextNode).text} node : ${JSON.stringify(node)}`);
+            //If it's not a link and it start with @ it can be a role
+            if ((node as Parser.TextNode).text.charAt(0) === "@") {
+                return await this.parseRole(opts,(node as Parser.TextNode).text);
+            }
+
             return await this.escapeDiscord(opts, (node as Parser.TextNode).text);
         } else if (node.nodeType === Parser.NodeType.ELEMENT_NODE) {
             const nodeHtml = node as Parser.HTMLElement;

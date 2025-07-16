@@ -41,7 +41,6 @@ export class MatrixMessageProcessor {
     private parser: MatrixMessageParser;
     constructor(public bot: DiscordBot, private config: DiscordBridgeConfig) {
         this.parser = new MatrixMessageParser();
-        log.error(`Mon parser est la`)
     }
 
     public async FormatMessage(
@@ -133,7 +132,7 @@ export class MatrixMessageProcessor {
             },
             getRoleId: async (mxid: string) => {
                 const role = await guild.roles.fetch(mxid);
-                log.warn(`Role : ${role} Id : ${mxid}`);
+                log.warn(`Role : ${JSON.stringify(role)} Id : ${mxid}`);
                 if (!role) {
                     return null;
                 }

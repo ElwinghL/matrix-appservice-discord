@@ -72,6 +72,9 @@ export class MatrixMessageParser {
     ): Promise<string> {
         opts.listDepth = 0;
         let reply = "";
+
+        log.warn(`FormatMessage : msg : ${JSON.stringify(msg)}`);
+
         if (msg.formatted_body) {
             const parsed = Parser.parse(msg.formatted_body, {
                 lowerCaseTagName: true,
@@ -96,8 +99,6 @@ export class MatrixMessageParser {
     }
 
     private async escapeDiscord(opts: IMatrixMessageParserOpts, msg: string): Promise<string> {
-        log.warn(`escapeDiscord : ${msg}`);
-
         msg = unescapeHtml(msg);
         // \u200B is the zero-width space --> they still look the same but don't mention
         msg = msg.replace(/@everyone/g, "@\u200Beveryone");

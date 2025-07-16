@@ -124,6 +124,7 @@ export class MatrixMessageProcessor {
                 const USER_REGEX = /^@xdiscord_([0-9]+)/;
                 const match = mxid.match(USER_REGEX);
                 const member = match && await guild.members.fetch(match[1]);
+                log.warn(`Member : ${member} Id : ${mxid}`);
                 if (!match || !member) {
                     return null;
                 }
